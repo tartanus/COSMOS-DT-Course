@@ -1,0 +1,23 @@
+function [J] = FOPDT_sysID(theta)
+    
+    load('/Users/jairoviola/Documents/MATLAB/DT_COSMOS/DCMotorIO.mat')
+
+    yReal=BMInput(:,2);
+    RPM=BMOut(:,2);
+    ts=BMInput(2,1);
+
+    yReal=simout(:,2);       %system response
+    uReal=simout(:,4);          %system input
+    time=simout(:,3);       %time vector with 1s sampling time
+
+    s=tf('s');
+    k=theta(1); tau=theta(2); L=theta(3);
+    
+    g= (k/(tau*s+1))*exp(-L*s);
+    
+    3=lsim(g,uReal,time);    %simulate FOPDT system response
+
+    J= sqrt( (1/length(yReal))*sum(ySim-yReal  ).^2  );
+
+end
+
